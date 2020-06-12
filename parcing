@@ -1,0 +1,47 @@
+
+# импортируем silenium
+from selenium import webdriver as wb 
+
+# ссылка на сайт с документами
+link = "https://hudoc.echr.coe.int/eng#{%22documentcollectionid2%22:[%22GRANDCHAMBER%22,%22CHAMBER%22]}"
+
+# подгружаем драйвер для браузера (Chrome)
+
+br = wb.Chrome('/Users/moroko/Downloads/chromedriver')
+br.get(link)
+
+# теперь ищем заголовки документов
+# я выяснила, что они имеют класс headline 
+
+urls_raw = br.find_elements_by_class_name('headline')
+
+urls_clean = []
+
+link = "https://hudoc.echr.coe.int/eng#{%22documentcollectionid2%22:[%22GRANDCHAMBER%22,%22CHAMBER%22]}"
+br = wb.Chrome('/Users/allat/Downloads/chromedriver')
+br.get(link)
+
+from time import sleep
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+
+L = []
+
+# скроллим 4000 раз и записываем ссылки в список
+# на каждом шаге
+# нужен большой sleep, иначе не успевает догрузить
+# и выпадает
+
+for i in range(300): #scroll 200 times
+    ActionChains(br).send_keys(Keys.END).perform()
+    sleep(5)
+    
+    urls_raw = br.find_elements_by_class_name('headline')
+    urls_clean = []
+    
+    for u in urls_raw:
+        if u not in urls_clean:
+            urls_clean.append(u.get_property('href'))
+    
+    L.extend(urls_clean)
+    sleep(5)
